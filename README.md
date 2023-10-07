@@ -75,7 +75,7 @@ The Weather App is a simple web application that allows users to quickly access 
   - Blog Post: [Bootstrap Pricing Table Example](https://ordinarycoders.com/blog/article/bootstrap-pricing-table-example) by Ordinary Coders
 
 - **Icons8**: The humidity and wind icons used in this project were downloaded from Icons8:
-  - Icons8[https://icons8.com/](https://icons8.com/)
+  - Icons8: [https://icons8.com/](https://icons8.com/)
 
 ---
 

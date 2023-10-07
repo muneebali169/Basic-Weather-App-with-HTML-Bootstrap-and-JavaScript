@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Weather App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  </head>
+  <body style="background: linear-gradient(90deg, #00C9FF 0%, #92FE9D 100%);">
+    <header>
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+              <a class="navbar-brand" href="#">Weather App</a>
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                  <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Home</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">About this app</a>
+                  </li>
+                </ul>
+                <form class="d-flex" role="search" onsubmit="searchWeather(event)">
+                  <input id="cityInput" class="form-control me-2" type="search" placeholder="Enter city name..." aria-label="Search">
+                  <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+              </div>
+            </div>
+          </nav>
+    </header>
+    <div class="container-fluid;">
+        <div class="container p-5" id="weatherContent" style="display: none;">
+            <!-- Weather data will be inserted here -->
+        </div>
+        <div class="container p-5" id="forecastContent" style="display: none;">
+            <!-- Forecast data will be inserted here -->
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script>
+        function searchWeather(event) {
+            event.preventDefault(); // Prevent form submission
+        
+            // Get the city name from the input field
+            const city = document.getElementById("cityInput").value;
+        
+            // Construct the API URL for OpenWeatherMap
+            const apiKey = "2d56ab94cf57fa1c37c210745d2f586c"; // Replace with your OpenWeatherMap API key
+            const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+        
+            // Fetch weather data from the API
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    // Extract relevant data from the API response
+                    const temperature = data.main.temp;
+                    const humidity = data.main.humidity;
+                    const windSpeed = data.wind.speed;
+        
+                    // Update the content with the retrieved data
+                    const weatherContent = document.getElementById("weatherContent");
+                    weatherContent.innerHTML = `
+                        <div class="row">
+                            <p class="display-6 text-center">Weather Updates for ${city}</p>
+                            <div class="col-lg-4 col-md-12 mb-4">
+                                <div class="card h-100 shadow-lg">
+                                    <div class="card-body">
+                                        <div class="text-center p-3">
+                                            <h5 class="card-title">Temperature</h5>
+                                            <small>Current Temperature</small>
+                                            <br><br>
+                                            <img src="https://openweathermap.org/img/w/${data.weather[0].icon}.png" width="70">
+                                            <br>
+                                            <span class="h2">${temperature}°C</span>
+                                            <br>
+                                            <span class="h2">${data.weather[0].main}</span>
+                                            <br><br>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-12 mb-4">
+                                <div class="card h-100 shadow-lg">
+                                    <div class="card-body">
+                                        <div class="text-center p-3">
+                                            <h5 class="card-title">Humidity</h5>
+                                            <small>Relative Humidity</small>
+                                            <br><br>
+                                            <img src="humidity.png" width="70">
+                                            <br>
+                                            <span class="h2">${humidity}%<br>Humidity</span>
+                                            <br><br>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-12 mb-4">
+                                <div class="card h-100 shadow-lg">
+                                    <div class="card-body">
+                                        <div class="text-center p-3">
+                                            <h5 class="card-title">Wind Speed</h5>
+                                            <small>Wind Speed Forecast</small>
+                                            <br><br>
+                                            <img src="wind.png" width="70">
+                                            <br>
+                                            <span class="h2">${windSpeed} km/h<br>Wind Speed</span>
+                                            <br><br>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+        
+                    // Display the weather content
+                    weatherContent.style.display = "block";
+                })
+                .catch(error => {
+                    console.error("Error fetching weather data:", error);
+                    alert("An error occurred while fetching weather data. Please try again later.");
+                });
+        
+            // Construct the API URL for 7-day forecast
+            const forecastApiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
+        
+            // Fetch 7-day forecast data from the API
+            fetch(forecastApiUrl)
+                .then(response => response.json())
+                .then(forecastData => {
+                    // Extract and display the next 7 days' forecast
+                    const forecastContent = document.getElementById("forecastContent");
+                    forecastContent.innerHTML = `
+                        <p class="display-6 text-center">Weather forecast for the next 7 days in ${city}</p>
+                        <table class="table shadow-lg">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Temperature</th>
+                                    <th scope="col">Description</th>
+                                    <th scope="col">Humidity</th>
+                                    <th scope="col">Wind Speed</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${forecastData.list.slice(0, 7).map((forecast, index) => {
+                                    const forecastDate = new Date();
+                                    forecastDate.setDate(forecastDate.getDate() + index);
+                                    const dateStr = formatDate(forecastDate);
+                                    return `
+                                        <tr>
+                                            <td>${dateStr}</td>
+                                            <td>${forecast.main.temp}°C</td>
+                                            <td>${forecast.weather[0].main}</td>
+                                            <td>${forecast.main.humidity}%</td>
+                                            <td>${forecast.wind.speed} km/h</td>
+                                            </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                        <footer style="text-align: center;">
+                            <a target="_blank" href="https://icons8.com/icon/13001/humidity">Humidity</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+                            <br>
+                            <a target="_blank" href="https://icons8.com/icon/z0vbQvXUEJCj/wind">Wind</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+                        </footer>
+                    `;
+        
+                    // Display the forecast content
+                    forecastContent.style.display = "block";
+                })
+                .catch(error => {
+                    console.error("Error fetching forecast data:", error);
+                });
+        }
+        
+        function getDayName(dayIndex) {
+            const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            return daysOfWeek[dayIndex];
+        }
+        
+        function formatDate(date) {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        }        
+    </script>
+  </body>
+</html>
